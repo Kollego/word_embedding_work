@@ -1,4 +1,6 @@
 start.bat
 .ipynb_checkpoints
 03. LSA, LDA and etc/LDA/papers.csv
-03. LSA, LDA and etc/LSA/articles.csv
+03. LSA, LDA and etc/LSA/articles.txt
+*.json
+*.pickle
