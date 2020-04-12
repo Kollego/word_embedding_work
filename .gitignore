@@ -5,3 +5,5 @@ start.bat
 *.json
 *.pickle
 Pickles
+.idea
+venv
