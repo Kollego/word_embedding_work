@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>main</title>
+    <link rel="stylesheet" href="{{url_for('static', filename = 'styles/styles.css')}}">
+</head>
+<h1>ПРОВЕРКА СОЧИНЕНИЯ</h1>
+<form method="post" action="/check_writing">
+    <textarea type="text" name="topic" placeholder="Тема сочинения" rows="4" cols="50"></textarea>
+    <textarea type="text" name="direction" placeholder="Направления сочинения" rows="4" cols="50"></textarea>
+    <textarea style="height: 350px;" type="text" name="text" placeholder="Текст сочинения" rows="4" cols="50"></textarea>
+    <input type="submit" value="Проверить сочинение">
+</form>
+<div id="result">
+{% if message['show']%}
+    <h2>Выделенные направления сочинения</h2>
+    <h4><i>(в скобках величина, показывающая значимость темы для сочинения в диапазоне [0 1])</i></h4>
+    {{message['directions']}}
+    <h2>Аргументы сочинения</h2>
+    <h4><i>(от красного к зеленому, серые - неопознанные)</i></h4>
+    {{message['text']}}
+    <h2>Возможные альтернативные аргументы</h2>
+    {{message['alt']}}
+    {{message['is_good']}}
+{% endif %}
+</div>
+</body>
+</html>
