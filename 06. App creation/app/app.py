@@ -157,17 +157,26 @@ def make_named_entity_fit(direction_vect):
 # проверка того, хорошее ли сочинение
 def make_conclusion_for_writing(ne_vect, ne_fit):
     X = np.multiply(ne_vect, ne_fit)
-    return svc_named_entity.predict(np.array([X]))[0]
+    return np.mean(X) > 0.
 
 
 # получение индексы альтернативных именованных сущностей, подходящих тексту
-def get_alternative_named_enteties(ne_fit, threshold=0.5):
+def get_alternative_named_enteties(ne_fit, named_enteties, threshold = 0.5):
     m = len(ne_fit)
     result = []
-    indices = np.argsort(ne_fit)[-5:]
+    indices = np.fliplr([np.argsort(ne_fit)[-10:]])[0]
+    k = 0
     for i in indices:
         if ne_fit[i] >= threshold:
-            result.append(i)
+            to_res = True
+            for _,_,g in named_enteties:
+                if compare_groups(groups_in_matrix[i], groups_in_matrix[g]):
+                    to_res = False
+            if to_res:    
+                result.append(i)
+                k += 1
+        if k == 5:
+            break
     return result
 
 
@@ -261,6 +270,15 @@ def compare_with_group(name, group):
     for el in group:
         if compare_str(name, el):
             return True
+    return False
+	
+# Функция сравнения двух групп именовааных сущностей
+def compare_groups(group1, group2):
+    
+    for el1 in group1:
+        for el2 in group2:
+            if compare_str(el1, el2):
+                return True
     return False
 
 
@@ -382,14 +400,14 @@ def check_writing():
     message['text'] = Markup(message['text'])
 
     alt_out = ''
-    alt_ne = get_alternative_named_enteties(ne_fit)
+    alt_ne = get_alternative_named_enteties(ne_fit, named_enteties, threshold=0.1)
     for ne_i in alt_ne:
         group = groups_in_matrix[ne_i]
         alt_out += '<li>{}</li>'.format(get_longest_ne(group))
     message['alt'] = Markup('<ul>{}</ul>'.format(alt_out))
 
 
-    if conclusion == 1:
+    if conclusion:
         is_good_out = '<h2 style="background-color: #4CAF50;" align="center">Хорошее сочинение!</h2>'
     else:
         is_good_out = '<h2 style="background-color: #F2502D;" align="center">Аргументы не соответствуют теме!</h2>'
