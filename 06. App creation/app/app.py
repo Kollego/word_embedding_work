@@ -146,7 +146,8 @@ def make_direction_vector(prediction=None, direction=None, topic=None, threshold
 def make_named_entity_vector(enteties):
     ne_vect = np.array([0] * len(groups_in_matrix))
     for _, _, g in enteties:
-        ne_vect[g] = 1
+        if g != -1:
+            ne_vect[g] = 1
     return ne_vect
 
 
@@ -157,7 +158,7 @@ def make_named_entity_fit(direction_vect):
 # проверка того, хорошее ли сочинение
 def make_conclusion_for_writing(ne_vect, ne_fit):
     X = np.multiply(ne_vect, ne_fit)
-    return np.mean(X) > 0.
+    return np.mean(X[np.where(X != 0.)]) > 0.
 
 
 # получение индексы альтернативных именованных сущностей, подходящих тексту
